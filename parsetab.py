@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ADD ATRIBUICAO DELIMITADOR DIV IDENTIFICADOR MULT NUMERO SUB\n    expressao : IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR\n              | termo ADD termo\n              | termo SUB termo\n              | termo MULT termo\n              | termo DIV termo\n              | IDENTIFICADOR\n              | NUMERO\n    \n    termo : IDENTIFICADOR\n          | NUMERO\n    '
+_lr_signature = 'leftOPERADORATRIBUICAO IDENTIFICADOR NUMERO OPERADOR\n    expression : IDENTIFICADOR ATRIBUICAO expression\n               | expression OPERADOR expression\n               | IDENTIFICADOR\n               | NUMERO\n    '
     
-_lr_action_items = {'IDENTIFICADOR':([0,5,6,7,8,9,],[2,2,12,12,12,12,]),'NUMERO':([0,5,6,7,8,9,],[4,4,13,13,13,13,]),'$end':([1,2,4,11,12,13,14,15,16,17,],[0,-6,-7,-2,-8,-9,-3,-4,-5,-1,]),'ATRIBUICAO':([2,],[5,]),'DELIMITADOR':([2,4,10,11,12,13,14,15,16,17,],[-6,-7,17,-2,-8,-9,-3,-4,-5,-1,]),'ADD':([2,3,4,],[-8,6,-9,]),'SUB':([2,3,4,],[-8,7,-9,]),'MULT':([2,3,4,],[-8,8,-9,]),'DIV':([2,3,4,],[-8,9,-9,]),}
+_lr_action_items = {'IDENTIFICADOR':([0,4,5,],[2,2,2,]),'NUMERO':([0,4,5,],[3,3,3,]),'$end':([1,2,3,6,7,],[0,-3,-4,-2,-1,]),'OPERADOR':([1,2,3,6,7,],[4,-3,-4,-2,4,]),'ATRIBUICAO':([2,],[5,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expressao':([0,5,],[1,10,]),'termo':([0,5,6,7,8,9,],[3,3,11,14,15,16,]),}
+_lr_goto_items = {'expression':([0,4,5,],[1,6,7,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,14 +26,9 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> expressao","S'",1,None,None,None),
-  ('expressao -> IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR','expressao',4,'p_expressao','analisador.py',78),
-  ('expressao -> termo ADD termo','expressao',3,'p_expressao','analisador.py',79),
-  ('expressao -> termo SUB termo','expressao',3,'p_expressao','analisador.py',80),
-  ('expressao -> termo MULT termo','expressao',3,'p_expressao','analisador.py',81),
-  ('expressao -> termo DIV termo','expressao',3,'p_expressao','analisador.py',82),
-  ('expressao -> IDENTIFICADOR','expressao',1,'p_expressao','analisador.py',83),
-  ('expressao -> NUMERO','expressao',1,'p_expressao','analisador.py',84),
-  ('termo -> IDENTIFICADOR','termo',1,'p_termo','analisador.py',140),
-  ('termo -> NUMERO','termo',1,'p_termo','analisador.py',141),
+  ("S' -> expression","S'",1,None,None,None),
+  ('expression -> IDENTIFICADOR ATRIBUICAO expression','expression',3,'p_expression','analisador.py',42),
+  ('expression -> expression OPERADOR expression','expression',3,'p_expression','analisador.py',43),
+  ('expression -> IDENTIFICADOR','expression',1,'p_expression','analisador.py',44),
+  ('expression -> NUMERO','expression',1,'p_expression','analisador.py',45),
 ]

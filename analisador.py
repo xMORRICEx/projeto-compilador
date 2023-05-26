@@ -1,160 +1,82 @@
-# Importando a biblioteca ply
 import ply.lex as lex
 import ply.yacc as yacc
 
-# Definindo os tokens
-tokens = [
+# Lista de tokens
+tokens = (
     'IDENTIFICADOR',
     'NUMERO',
+    'OPERADOR',
     'ATRIBUICAO',
-    'ADD',
-    'SUB',
-    'MULT',
-    'DIV',
-    'DELIMITADOR'
-]
+)
 
-# Definindo as expressões regulares para os tokens
+# Regras de expressão regular para tokens simples
 t_IDENTIFICADOR = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_NUMERO = r'\d+(\.\d+)?'
+t_OPERADOR = r'[-+*/]'
 t_ATRIBUICAO = r'='
-t_ADD = r'\+'
-t_SUB = r'-'
-t_MULT = r'\*'
-t_DIV = r'/'
-t_DELIMITADOR = r';'
 
-# Ignorando espaços em branco
+# Regra de token para número
+def t_NUMERO(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+# Ignorar espaços em branco
 t_ignore = ' \t'
 
-# Definindo uma função para tratar erros léxicos
-
-
+# Tratamento de erros
 def t_error(t):
-    print(f"Caractere ilegal: {t.value[0]}")
+    print("Caractere inválido: '%s'" % t.value[0])
     t.lexer.skip(1)
 
-
-# Criando o analisador léxico
+# Construção do lexer
 lexer = lex.lex()
 
-# Definindo a gramática da expressão de três endereços
-"""
-expressao : IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR
-          | termo ADD termo
-          | termo SUB termo
-          | termo MULT termo
-          | termo DIV termo
-          | IDENTIFICADOR
-          | NUMERO
+# Regras de precedência dos operadores
+precedence = (
+    ('left', 'OPERADOR'),
+)
 
-termo : IDENTIFICADOR
-      | NUMERO
-"""
+# Regra para expressão
+def p_expression(p):
+    '''
+    expression : IDENTIFICADOR ATRIBUICAO expression
+               | expression OPERADOR expression
+               | IDENTIFICADOR
+               | NUMERO
+    '''
+    if len(p) == 4:
+        if p[2] == '=':
+            p[0] = p[3]
+            print(f"{p[1]} = {p[0]}")
+        else:
+            print("Erro: Após o símbolo de atribuição não pode aceitar mais de três operandos ou operadores")
+            p[0] = None
+    else:
+        p[0] = p[1]
 
-# Definindo uma função para tratar erros sintáticos
-
-
+# Tratamento de erros de sintaxe
 def p_error(p):
     if p:
-        print(f"Erro sintático: {p.value} na posição {p.lexpos}")
+        print("Erro de sintaxe: '%s'" % p.value)
     else:
-        print("Erro sintático: fim de arquivo inesperado")
+        print("Erro de sintaxe: fim de arquivo inesperado")
 
-# Definindo uma função para mostrar a tabela de símbolos
-
-
-def mostrar_tabela(tabela):
-    print("Tabela de Símbolos")
-    print("lexema\ttoken")
-    for lexema, token in tabela.items():
-        print(f"{lexema}\t{token}")
-
-# Definindo uma função para analisar a expressão de três endereços
-
-
-def p_expressao(p):
-    """
-    expressao : IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR
-              | termo ADD termo
-              | termo SUB termo
-              | termo MULT termo
-              | termo DIV termo
-              | IDENTIFICADOR
-              | NUMERO
-    """
-    # Criando uma tabela de símbolos vazia
-    tabela = {}
-
-    # Verificando se a expressão é válida (tem três operandos e dois operadores além da atribuição)
-    if len(p) == 5 and p[2] == '=':
-        # Contando o número de operandos e operadores na subexpressão
-        operandos = 0
-        operadores = 0
-        for i in range(3, len(p) - 1):
-            if p[i] in ('+', '-', '*', '/'):
-                operadores += 1
-            else:
-                operandos += 1
-
-        # Se o número de operandos for maior que três ou o número de operadores for maior que dois, mostrar uma mensagem de erro
-        if operandos > 3 or operadores > 2:
-            print(
-                f"Erro: foram encontrados mais de três operandos e mais de dois operadores na expressão de três endereços: {p[1]} {p[2]} {' '.join(p[3:-1])} {p[-1]}")
-            return
-
-        # Caso contrário, adicionar os lexemas e tokens na tabela de símbolos
-        else:
-            tabela[p[1]] = 'IDENTIFICADOR'
-            tabela[p[2]] = 'ATRIBUICAO'
-            for i in range(3, len(p) - 1):
-                if p[i] in ('+', '-', '*', '/'):
-                    tabela[p[i]] = f'OPERADOR_{p[i]}'
-                elif p[i].isalpha():
-                    tabela[p[i]] = 'IDENTIFICADOR'
-                else:
-                    tabela[p[i]] = 'NUMERO'
-            tabela[p[-1]] = 'DELIMITADOR'
-
-# Se a expressão não for válida, mostrar uma mensagem de erro
-    else:
-    # Verificar se p[1] é diferente de None
-        if p[1] is not None:
-        # Usar o método join para juntar os elementos da lista p[1:] em uma string
-            print(
-                f"Erro: expressão de três endereços inválida: {' '.join(p[1:])}")
-        else:
-        # Mostrar uma mensagem genérica de erro
-            print("Erro: expressão de três endereços inválida")
-        return
-
-
-    # Mostrar a tabela de símbolos na tela
-    mostrar_tabela(tabela)
-
-# Definindo as regras para os termos da expressão
-
-
-def p_termo(p):
-    """
-    termo : IDENTIFICADOR
-          | NUMERO
-    """
-    pass
-
-
-# Criando o analisador sintático
+# Construção do parser
 parser = yacc.yacc()
 
-# Criando uma variável para armazenar a entrada do usuário
-entrada = ""
-
-# Criando um loop while para perguntar a entrada até que o usuário digite "sair"
-while entrada != "sair":
- # Lendo a entrada de dados do usuário
- entrada = input("Entrada de dados (digite sair para encerrar): ")
-
- # Verificando se a entrada é diferente de "sair"
- if entrada != "sair":
- # Analisando a entrada com o analisador sintático e léxico
+# Função para analisar a entrada
+def analisar_entrada(entrada):
+    lexer.input(entrada)
+    while True:
+        token = lexer.token()
+        if not token:
+            break
+        print(f"{token.value} : {token.type}")
     parser.parse(entrada)
+
+# Loop para entrada de dados
+while True:
+    entrada = input("Entrada de dados (digite 'sair' para encerrar): ")
+    if entrada == 'sair':
+        break
+    analisar_entrada(entrada)

@@ -2,224 +2,114 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
 Grammar
 
-Rule 0     S' -> expressao
-Rule 1     expressao -> IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR
-Rule 2     expressao -> termo ADD termo
-Rule 3     expressao -> termo SUB termo
-Rule 4     expressao -> termo MULT termo
-Rule 5     expressao -> termo DIV termo
-Rule 6     expressao -> IDENTIFICADOR
-Rule 7     expressao -> NUMERO
-Rule 8     termo -> IDENTIFICADOR
-Rule 9     termo -> NUMERO
+Rule 0     S' -> expression
+Rule 1     expression -> IDENTIFICADOR ATRIBUICAO expression
+Rule 2     expression -> expression OPERADOR expression
+Rule 3     expression -> IDENTIFICADOR
+Rule 4     expression -> NUMERO
 
 Terminals, with rules where they appear
 
-ADD                  : 2
 ATRIBUICAO           : 1
-DELIMITADOR          : 1
-DIV                  : 5
-IDENTIFICADOR        : 1 6 8
-MULT                 : 4
-NUMERO               : 7 9
-SUB                  : 3
+IDENTIFICADOR        : 1 3
+NUMERO               : 4
+OPERADOR             : 2
 error                : 
 
 Nonterminals, with rules where they appear
 
-expressao            : 1 0
-termo                : 2 2 3 3 4 4 5 5
+expression           : 1 2 2 0
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . expressao
-    (1) expressao -> . IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR
-    (2) expressao -> . termo ADD termo
-    (3) expressao -> . termo SUB termo
-    (4) expressao -> . termo MULT termo
-    (5) expressao -> . termo DIV termo
-    (6) expressao -> . IDENTIFICADOR
-    (7) expressao -> . NUMERO
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
+    (0) S' -> . expression
+    (1) expression -> . IDENTIFICADOR ATRIBUICAO expression
+    (2) expression -> . expression OPERADOR expression
+    (3) expression -> . IDENTIFICADOR
+    (4) expression -> . NUMERO
 
     IDENTIFICADOR   shift and go to state 2
-    NUMERO          shift and go to state 4
+    NUMERO          shift and go to state 3
 
-    expressao                      shift and go to state 1
-    termo                          shift and go to state 3
+    expression                     shift and go to state 1
 
 state 1
 
-    (0) S' -> expressao .
+    (0) S' -> expression .
+    (2) expression -> expression . OPERADOR expression
 
+    OPERADOR        shift and go to state 4
 
 
 state 2
 
-    (1) expressao -> IDENTIFICADOR . ATRIBUICAO expressao DELIMITADOR
-    (6) expressao -> IDENTIFICADOR .
-    (8) termo -> IDENTIFICADOR .
+    (1) expression -> IDENTIFICADOR . ATRIBUICAO expression
+    (3) expression -> IDENTIFICADOR .
 
     ATRIBUICAO      shift and go to state 5
-    $end            reduce using rule 6 (expressao -> IDENTIFICADOR .)
-    DELIMITADOR     reduce using rule 6 (expressao -> IDENTIFICADOR .)
-    ADD             reduce using rule 8 (termo -> IDENTIFICADOR .)
-    SUB             reduce using rule 8 (termo -> IDENTIFICADOR .)
-    MULT            reduce using rule 8 (termo -> IDENTIFICADOR .)
-    DIV             reduce using rule 8 (termo -> IDENTIFICADOR .)
+    OPERADOR        reduce using rule 3 (expression -> IDENTIFICADOR .)
+    $end            reduce using rule 3 (expression -> IDENTIFICADOR .)
 
 
 state 3
 
-    (2) expressao -> termo . ADD termo
-    (3) expressao -> termo . SUB termo
-    (4) expressao -> termo . MULT termo
-    (5) expressao -> termo . DIV termo
+    (4) expression -> NUMERO .
 
-    ADD             shift and go to state 6
-    SUB             shift and go to state 7
-    MULT            shift and go to state 8
-    DIV             shift and go to state 9
+    OPERADOR        reduce using rule 4 (expression -> NUMERO .)
+    $end            reduce using rule 4 (expression -> NUMERO .)
 
 
 state 4
 
-    (7) expressao -> NUMERO .
-    (9) termo -> NUMERO .
+    (2) expression -> expression OPERADOR . expression
+    (1) expression -> . IDENTIFICADOR ATRIBUICAO expression
+    (2) expression -> . expression OPERADOR expression
+    (3) expression -> . IDENTIFICADOR
+    (4) expression -> . NUMERO
 
-    $end            reduce using rule 7 (expressao -> NUMERO .)
-    DELIMITADOR     reduce using rule 7 (expressao -> NUMERO .)
-    ADD             reduce using rule 9 (termo -> NUMERO .)
-    SUB             reduce using rule 9 (termo -> NUMERO .)
-    MULT            reduce using rule 9 (termo -> NUMERO .)
-    DIV             reduce using rule 9 (termo -> NUMERO .)
+    IDENTIFICADOR   shift and go to state 2
+    NUMERO          shift and go to state 3
 
+    expression                     shift and go to state 6
 
 state 5
 
-    (1) expressao -> IDENTIFICADOR ATRIBUICAO . expressao DELIMITADOR
-    (1) expressao -> . IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR
-    (2) expressao -> . termo ADD termo
-    (3) expressao -> . termo SUB termo
-    (4) expressao -> . termo MULT termo
-    (5) expressao -> . termo DIV termo
-    (6) expressao -> . IDENTIFICADOR
-    (7) expressao -> . NUMERO
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
+    (1) expression -> IDENTIFICADOR ATRIBUICAO . expression
+    (1) expression -> . IDENTIFICADOR ATRIBUICAO expression
+    (2) expression -> . expression OPERADOR expression
+    (3) expression -> . IDENTIFICADOR
+    (4) expression -> . NUMERO
 
     IDENTIFICADOR   shift and go to state 2
-    NUMERO          shift and go to state 4
+    NUMERO          shift and go to state 3
 
-    expressao                      shift and go to state 10
-    termo                          shift and go to state 3
+    expression                     shift and go to state 7
 
 state 6
 
-    (2) expressao -> termo ADD . termo
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
+    (2) expression -> expression OPERADOR expression .
+    (2) expression -> expression . OPERADOR expression
 
-    IDENTIFICADOR   shift and go to state 12
-    NUMERO          shift and go to state 13
+    OPERADOR        reduce using rule 2 (expression -> expression OPERADOR expression .)
+    $end            reduce using rule 2 (expression -> expression OPERADOR expression .)
 
-    termo                          shift and go to state 11
+  ! OPERADOR        [ shift and go to state 4 ]
+
 
 state 7
 
-    (3) expressao -> termo SUB . termo
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
+    (1) expression -> IDENTIFICADOR ATRIBUICAO expression .
+    (2) expression -> expression . OPERADOR expression
 
-    IDENTIFICADOR   shift and go to state 12
-    NUMERO          shift and go to state 13
+  ! shift/reduce conflict for OPERADOR resolved as shift
+    $end            reduce using rule 1 (expression -> IDENTIFICADOR ATRIBUICAO expression .)
+    OPERADOR        shift and go to state 4
 
-    termo                          shift and go to state 14
+  ! OPERADOR        [ reduce using rule 1 (expression -> IDENTIFICADOR ATRIBUICAO expression .) ]
 
-state 8
-
-    (4) expressao -> termo MULT . termo
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
-
-    IDENTIFICADOR   shift and go to state 12
-    NUMERO          shift and go to state 13
-
-    termo                          shift and go to state 15
-
-state 9
-
-    (5) expressao -> termo DIV . termo
-    (8) termo -> . IDENTIFICADOR
-    (9) termo -> . NUMERO
-
-    IDENTIFICADOR   shift and go to state 12
-    NUMERO          shift and go to state 13
-
-    termo                          shift and go to state 16
-
-state 10
-
-    (1) expressao -> IDENTIFICADOR ATRIBUICAO expressao . DELIMITADOR
-
-    DELIMITADOR     shift and go to state 17
-
-
-state 11
-
-    (2) expressao -> termo ADD termo .
-
-    $end            reduce using rule 2 (expressao -> termo ADD termo .)
-    DELIMITADOR     reduce using rule 2 (expressao -> termo ADD termo .)
-
-
-state 12
-
-    (8) termo -> IDENTIFICADOR .
-
-    $end            reduce using rule 8 (termo -> IDENTIFICADOR .)
-    DELIMITADOR     reduce using rule 8 (termo -> IDENTIFICADOR .)
-
-
-state 13
-
-    (9) termo -> NUMERO .
-
-    $end            reduce using rule 9 (termo -> NUMERO .)
-    DELIMITADOR     reduce using rule 9 (termo -> NUMERO .)
-
-
-state 14
-
-    (3) expressao -> termo SUB termo .
-
-    $end            reduce using rule 3 (expressao -> termo SUB termo .)
-    DELIMITADOR     reduce using rule 3 (expressao -> termo SUB termo .)
-
-
-state 15
-
-    (4) expressao -> termo MULT termo .
-
-    $end            reduce using rule 4 (expressao -> termo MULT termo .)
-    DELIMITADOR     reduce using rule 4 (expressao -> termo MULT termo .)
-
-
-state 16
-
-    (5) expressao -> termo DIV termo .
-
-    $end            reduce using rule 5 (expressao -> termo DIV termo .)
-    DELIMITADOR     reduce using rule 5 (expressao -> termo DIV termo .)
-
-
-state 17
-
-    (1) expressao -> IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR .
-
-    $end            reduce using rule 1 (expressao -> IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR .)
-    DELIMITADOR     reduce using rule 1 (expressao -> IDENTIFICADOR ATRIBUICAO expressao DELIMITADOR .)
-
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for OPERADOR in state 7 resolved as shift
